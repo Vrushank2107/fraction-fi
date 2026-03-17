@@ -25,7 +25,7 @@ interface Transaction {
   id: number;
   asset_name: string;
   asset_type: string;
-  transaction_type: 'purchase' | 'sale' | 'profit_distribution';
+  transaction_type: 'purchase' | 'sell' | 'sale' | 'profit_distribution';
   amount: number;
   price_per_token: number;
   total_amount: number;
@@ -110,9 +110,14 @@ export default function Transactions() {
   const filterTransactions = () => {
     let filtered = transactions;
 
-    // Filter by type
+    // Filter by type (handle both 'sell' and 'sale' for sell filter)
     if (filterType !== 'all') {
-      filtered = filtered.filter(tx => tx.transaction_type === filterType);
+      filtered = filtered.filter(tx => {
+        if (filterType === 'sell') {
+          return tx.transaction_type === 'sell' || tx.transaction_type === 'sale';
+        }
+        return tx.transaction_type === filterType;
+      });
     }
 
     // Filter by status
@@ -136,6 +141,7 @@ export default function Transactions() {
     switch (type) {
       case 'purchase':
         return <TrendingUp className="h-4 w-4 text-green-600" />;
+      case 'sell':
       case 'sale':
         return <TrendingDown className="h-4 w-4 text-red-600" />;
       case 'profit_distribution':
@@ -149,6 +155,7 @@ export default function Transactions() {
     switch (type) {
       case 'purchase':
         return 'bg-green-100 text-green-800';
+      case 'sell':
       case 'sale':
         return 'bg-red-100 text-red-800';
       case 'profit_distribution':
@@ -188,7 +195,7 @@ export default function Transactions() {
       options: [
         { value: 'all', label: 'All Types' },
         { value: 'purchase', label: 'Purchases' },
-        { value: 'sale', label: 'Sales' },
+        { value: 'sell', label: 'Sells' },
         { value: 'profit_distribution', label: 'Profit Distributions' },
       ],
       value: filterType,
@@ -352,12 +359,12 @@ export default function Transactions() {
                   Purchases
                 </Button>
                 <Button
-                  variant={filterType === 'sale' ? 'primary' : 'outline'}
+                  variant={filterType === 'sell' ? 'primary' : 'outline'}
                   size="sm"
-                  onClick={() => setFilterType('sale')}
+                  onClick={() => setFilterType('sell')}
                 >
                   <TrendingDown className="h-3 w-3 mr-1" />
-                  Sales
+                  Sells
                 </Button>
                 <Button
                   variant={filterType === 'profit_distribution' ? 'primary' : 'outline'}
@@ -398,7 +405,7 @@ export default function Transactions() {
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">Sale</span>
+              <span className="text-gray-700 dark:text-gray-300 font-medium">Sell</span>
             </div>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
@@ -464,7 +471,7 @@ export default function Transactions() {
                         <div className="flex items-center">
                           {getTypeIcon(transaction.transaction_type)}
                           <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getTypeColor(transaction.transaction_type)}`}>
-                            {transaction.transaction_type.replace('_', ' ')}
+                            {transaction.transaction_type === 'sale' ? 'Sell' : transaction.transaction_type.replace('_', ' ')}
                           </span>
                         </div>
                       </td>

@@ -52,7 +52,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
   }, [error]);
 
   useEffect(() => {
-    checkConnection();
+    // Disable auto-connection to prevent RPC errors during development
+    // checkConnection();
     setupEventListeners();
   }, []);
 
@@ -124,6 +125,11 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setError(null);
     } catch (error: any) {
       console.error('Error checking connection:', error);
+      // Suppress RPC-related errors during development
+      if (error.message && error.message.includes('RPC endpoint returned too many errors')) {
+        console.log('RPC endpoint error suppressed during development');
+        return;
+      }
       setError(error.message || 'Failed to check wallet connection');
     }
   };
@@ -198,6 +204,7 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       setProvider(provider);
       setSigner(signer);
       setIsConnected(true);
+      setIsConnecting(false);
       setConnectionRequested(false);
       setManuallyDisconnected(false);
       setError(null);
@@ -205,6 +212,8 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       // Handle user rejection specifically - don't log to console as this is expected behavior
       if (error.code === 4001 || error.message?.includes('User rejected the request')) {
         setError('Connection cancelled. You can try again when ready.');
+      } else if (error.message && error.message.includes('RPC endpoint returned too many errors')) {
+        setError('RPC endpoint is busy. Please try again in a moment.');
       } else {
         console.error('Error connecting wallet:', error);
         setError(error.message || 'Failed to connect wallet');

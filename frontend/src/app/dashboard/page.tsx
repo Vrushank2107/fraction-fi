@@ -349,7 +349,10 @@ export default function Dashboard() {
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip 
-                    formatter={(value, name) => [formatCurrency(Number(value)), name === 'invested' ? 'Amount Invested' : name === 'current' ? 'Current Value' : 'Profit/Loss']}
+                    formatter={(value, name) => [
+                      formatCurrency(Number(value)), 
+                      name === 'Invested' ? 'Amount Invested' : 'Current Value'
+                    ]}
                     contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                   />
                   <Legend />

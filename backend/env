@@ -1,0 +1,6 @@
+DATABASE_URL="postgresql://neondb_owner:npg_mgYuCJ67xfDW@ep-square-term-anbhmd7h-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRES_IN=7d
+ETHEREUM_RPC_URL=https://eth-mainnet.g.alchemy.com/v2/demo
+PRIVATE_KEY=your-private-key
+CONTRACT_ADDRESS=your-contract-address

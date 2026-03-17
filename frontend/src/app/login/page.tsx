@@ -33,7 +33,7 @@ export default function Login() {
 
     try {
       await login(formData.email, formData.password);
-      router.push('/dashboard');
+      router.push('/');
     } catch (error: any) {
       setError(error.message || 'Login failed');
     } finally {
