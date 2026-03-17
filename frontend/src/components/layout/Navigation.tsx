@@ -8,8 +8,10 @@ import { useWallet } from '../../contexts/WalletContext';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { Wallet, LogOut, User, TrendingUp, Home, Menu, X, AlertCircle, CheckCircle, Loader2, Settings, ChevronDown, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export const Navigation: React.FC = () => {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const { account, isConnected, isConnecting, connectionRequested, connectWallet, disconnectWallet, error } = useWallet();
   const pathname = usePathname();
@@ -71,6 +73,7 @@ export const Navigation: React.FC = () => {
   const handleLogout = () => {
     logout();
     setIsMobileMenuOpen(false);
+    router.push('/');
   };
 
   const formatAddress = (address: string) => {
