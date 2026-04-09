@@ -13,9 +13,9 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
 
-    // Simple mock response for testing
+    // Simple mock response for testing - database not configured
     const mockUser = {
-      id: 1,
+      id: Math.floor(Math.random() * 1000000),
       name,
       email,
       wallet_address: wallet_address || null,
