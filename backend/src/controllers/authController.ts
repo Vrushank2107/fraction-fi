@@ -13,25 +13,26 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
 
-    // Simple mock response for testing - database not configured
-    const mockUser = {
-      id: Math.floor(Math.random() * 1000000),
+    // Use real database with UserModel
+    const user = await UserModel.create({
       name,
       email,
-      wallet_address: wallet_address || null,
-      role: role as 'user' | 'admin',
-      created_at: new Date(),
-      updated_at: new Date()
-    };
+      password,
+      wallet_address,
+      role
+    });
 
     // Generate JWT token
-    const token = generateToken(mockUser.id!, mockUser.email);
+    const token = generateToken(user.id!, user.email);
 
-    console.log('Mock registration successful for:', email);
+    // Remove password hash from response
+    const { password_hash, ...userResponse } = user;
+
+    console.log('Database registration successful for:', email);
 
     res.status(201).json({
       message: 'User registered successfully',
-      user: mockUser,
+      user: userResponse,
       token
     });
   } catch (error) {
@@ -44,12 +45,14 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
+    console.log('Login request received:', { email });
+
     // Validate input
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find user
+    // Find user in database
     const user = await UserModel.findByEmail(email);
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -66,6 +69,8 @@ export const login = async (req: Request, res: Response) => {
 
     // Remove password hash from response
     const { password_hash, ...userResponse } = user;
+
+    console.log('Database login successful for:', email);
 
     res.json({
       message: 'Login successful',
