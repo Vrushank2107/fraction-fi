@@ -33,6 +33,12 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', message: 'FractionFi API is running' });
 });
 
+// Simple test endpoint
+app.post('/api/test', (req: Request, res: Response) => {
+  console.log('Test endpoint called with body:', req.body);
+  res.json({ message: 'Test endpoint works', received: req.body });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/investments', investmentRoutes);
