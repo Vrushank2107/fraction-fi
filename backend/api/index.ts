@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { initDatabase } from '../src/models/database';
 import { apiLimiter } from '../src/middleware/rateLimiter';
 
@@ -21,9 +21,15 @@ app.use(cors({
   origin: process.env.FRONTEND_URL || 'https://fraction-fi.vercel.app',
   credentials: true
 }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('combined'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// Add error handling middleware
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Express error:', err);
+  res.status(500).json({ error: 'Internal server error', details: err.message });
+});
 
 // Apply rate limiting
 app.use('/api/', apiLimiter);
