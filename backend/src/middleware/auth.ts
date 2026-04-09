@@ -46,10 +46,8 @@ export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction
 };
 
 export const generateToken = (userId: number, email: string): string => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error('JWT_SECRET environment variable is not set');
-  }
+  const secret = process.env.JWT_SECRET || 'fallback-jwt-secret-for-development-only';
+  console.log('Using JWT secret:', secret === 'fallback-jwt-secret-for-development-only' ? 'fallback' : 'environment');
   
   return jwt.sign(
     { userId, email },
