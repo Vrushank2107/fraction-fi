@@ -32,6 +32,7 @@ export const MockUserModel = {
     wallet_address?: string;
     role?: string;
   }): Promise<MockUser> => {
+    console.log('Mock DB: Creating user:', userData.email);
     const password_hash = await bcrypt.hash(userData.password, 10);
     
     const newUser: MockUser = {

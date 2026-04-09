@@ -24,7 +24,9 @@ export interface CreateUserRequest {
 export class UserModel {
   static async create(userData: CreateUserRequest): Promise<User> {
     // Check if we should use mock database
+    console.log('DATABASE_URL check:', process.env.DATABASE_URL ? 'exists' : 'not found');
     if (!process.env.DATABASE_URL) {
+      console.log('Using mock database for user creation');
       return MockUserModel.create(userData);
     }
 
