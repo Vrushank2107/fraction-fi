@@ -1,4 +1,6 @@
 // Mock user storage for development when database is not available
+import bcrypt from 'bcryptjs';
+
 export interface MockUser {
   id?: number;
   name: string;
@@ -30,7 +32,6 @@ export const MockUserModel = {
     wallet_address?: string;
     role?: string;
   }): Promise<MockUser> => {
-    const bcrypt = require('bcryptjs');
     const password_hash = await bcrypt.hash(userData.password, 10);
     
     const newUser: MockUser = {
@@ -49,7 +50,6 @@ export const MockUserModel = {
   },
 
   verifyPassword: async (password: string, hash: string): Promise<boolean> => {
-    const bcrypt = require('bcryptjs');
     return bcrypt.compare(password, hash);
   },
 
