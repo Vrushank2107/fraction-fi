@@ -10,9 +10,30 @@ interface MockUser {
   updated_at: Date;
 }
 
-// In-memory storage
-let users: MockUser[] = [];
-let nextId = 1;
+// Use localStorage for persistence
+const getUsers = (): MockUser[] => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('mockUsers');
+    return stored ? JSON.parse(stored) : [];
+  }
+  return [];
+};
+
+const saveUsers = (users: MockUser[]) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('mockUsers', JSON.stringify(users));
+  }
+};
+
+const getNextId = (): number => {
+  if (typeof window !== 'undefined') {
+    const currentId = localStorage.getItem('mockNextId');
+    const nextId = currentId ? parseInt(currentId) + 1 : 1;
+    localStorage.setItem('mockNextId', nextId.toString());
+    return nextId;
+  }
+  return 1;
+};
 
 const generateToken = (userId: number, email: string): string => {
   const payload = { userId, email, iat: Date.now() / 1000 };
@@ -21,6 +42,8 @@ const generateToken = (userId: number, email: string): string => {
 
 export const mockApi = {
   async register(name: string, email: string, password: string, wallet_address?: string) {
+    const users = getUsers();
+    
     // Check if user already exists
     const existingUser = users.find(user => user.email === email);
     if (existingUser) {
@@ -29,7 +52,7 @@ export const mockApi = {
 
     // Create new user
     const newUser: MockUser = {
-      id: nextId++,
+      id: getNextId(),
       name,
       email,
       password, // Simple storage for mock
@@ -40,6 +63,7 @@ export const mockApi = {
     };
 
     users.push(newUser);
+    saveUsers(users);
 
     // Generate token
     const token = generateToken(newUser.id, newUser.email);
@@ -55,7 +79,8 @@ export const mockApi = {
   },
 
   async login(email: string, password: string) {
-    const user = users.find(u => u.email === email);
+    const users = getUsers();
+    const user = users.find((u: MockUser) => u.email === email);
     if (!user || user.password !== password) {
       throw new Error('Invalid credentials');
     }
@@ -72,7 +97,8 @@ export const mockApi = {
   },
 
   async getProfile(userId: number) {
-    const user = users.find(u => u.id === userId);
+    const users = getUsers();
+    const user = users.find((u: MockUser) => u.id === userId);
     if (!user) {
       throw new Error('User not found');
     }
@@ -82,7 +108,8 @@ export const mockApi = {
   },
 
   async updateProfile(userId: number, data: { name?: string; wallet_address?: string }) {
-    const userIndex = users.findIndex(u => u.id === userId);
+    const users = getUsers();
+    const userIndex = users.findIndex((u: MockUser) => u.id === userId);
     if (userIndex === -1) {
       throw new Error('User not found');
     }
@@ -92,6 +119,8 @@ export const mockApi = {
       ...data,
       updated_at: new Date()
     };
+
+    saveUsers(users);
 
     const { password: _, ...userResponse } = users[userIndex];
     return {
