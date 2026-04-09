@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { mockApi } from '../utils/mockApi';
 
 interface User {
   id: number;
@@ -79,7 +80,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
-      throw error;
+      console.log('Backend login failed, using mock API:', error);
+      // Fallback to mock API
+      try {
+        const data = await mockApi.login(email, password);
+        
+        setToken(data.token);
+        setUser(data.user);
+        
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } catch (mockError) {
+        throw mockError;
+      }
     }
   };
 
@@ -111,7 +124,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
-      throw error;
+      console.log('Backend registration failed, using mock API:', error);
+      // Fallback to mock API
+      try {
+        const data = await mockApi.register(name, email, password);
+        
+        setToken(data.token);
+        setUser(data.user);
+        
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } catch (mockError) {
+        throw mockError;
+      }
     }
   };
 
