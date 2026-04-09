@@ -18,7 +18,11 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://fraction-fi.vercel.app',
+  origin: [
+    'https://fraction-fi.vercel.app',
+    'https://fraction-grzcd6ohm-vrushank.vercel.app',
+    'https://fraction-skm4znnag-vrushank.vercel.app'
+  ],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
