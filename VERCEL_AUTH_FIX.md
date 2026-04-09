@@ -30,15 +30,15 @@ npm run dev
 ### Option 3: Use Alternative Hosting
 Deploy to Railway, Render, or other platforms that don't require authentication.
 
-## Current Working URLs (After Disabling Auth)
-- Frontend: https://fractionfi-kc1smpwg5-vrushank.vercel.app
-- Backend: https://fractionfi-jdawhfz93-vrushank.vercel.app
-- Blockchain: https://blockchain-g6ffd74hm-vrushank.vercel.app
+## Current Working URLs (Multi-Service Deployment)
+- Frontend: https://fraction-fi.vercel.app
+- Backend: https://fraction-fi.vercel.app/_/backend
+- Blockchain: https://fraction-fi.vercel.app/_/blockchain
 
 ## Test Login API
 Once authentication is disabled, test with:
 ```bash
-curl -X POST https://fractionfi-jdawhfz93-vrushank.vercel.app/api/auth/login \
+curl -X POST https://fraction-fi.vercel.app/_/backend/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"test123"}'
 ```

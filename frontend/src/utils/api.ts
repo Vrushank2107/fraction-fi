@@ -1,6 +1,6 @@
 // API utility functions with correct backend URL
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fractionfi-jdawhfz93-vrushank.vercel.app';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/_backend';
 
 export const apiFetch = async (endpoint: string, options?: RequestInit) => {
   const url = `${API_BASE_URL}${endpoint}`;

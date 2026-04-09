@@ -18,7 +18,7 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://fraction-grzcd6ohm-vrushank.vercel.app',
+  origin: process.env.FRONTEND_URL || 'https://fraction-fi.vercel.app',
   credentials: true
 }));
 app.use(morgan('combined'));
