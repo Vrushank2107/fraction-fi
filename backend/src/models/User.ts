@@ -1,5 +1,6 @@
 import { pool } from '../config/database';
 import bcrypt from 'bcryptjs';
+import { MockUserModel } from './mockUser';
 
 export interface User {
   id?: number;
@@ -22,6 +23,11 @@ export interface CreateUserRequest {
 
 export class UserModel {
   static async create(userData: CreateUserRequest): Promise<User> {
+    // Check if we should use mock database
+    if (!process.env.DATABASE_URL) {
+      return MockUserModel.create(userData);
+    }
+
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
     const query = `
@@ -43,12 +49,22 @@ export class UserModel {
   }
 
   static async findByEmail(email: string): Promise<User | null> {
+    // Check if we should use mock database
+    if (!process.env.DATABASE_URL) {
+      return MockUserModel.findByEmail(email);
+    }
+
     const query = 'SELECT * FROM users WHERE email = $1';
     const result = await pool.query(query, [email]);
     return result.rows[0] || null;
   }
 
   static async findById(id: number): Promise<User | null> {
+    // Check if we should use mock database
+    if (!process.env.DATABASE_URL) {
+      return MockUserModel.findById(id);
+    }
+
     const query = 'SELECT * FROM users WHERE id = $1';
     const result = await pool.query(query, [id]);
     return result.rows[0] || null;
@@ -71,6 +87,11 @@ export class UserModel {
   }
 
   static async updateProfile(userId: number, updates: Partial<User>): Promise<User | null> {
+    // Check if we should use mock database
+    if (!process.env.DATABASE_URL) {
+      return MockUserModel.updateProfile(userId, updates);
+    }
+
     const fields = [];
     const values = [];
     let paramIndex = 1;
